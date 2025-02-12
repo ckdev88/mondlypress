@@ -20,6 +20,7 @@ const charmap = {
 	ä: 'a',
 	à: 'a',
 	â: 'a',
+	ã: 'a',
 	ç: 'c',
 	ë: 'e',
 	é: 'e',
@@ -60,10 +61,12 @@ function composeLetters(tokens) {
  * @param letterKey {string}
  * @returns {void}
  */
+let duplicate
+
 function checkKeyHit(letterKey) {
 	if (letters.length < 1) composeLetters(tokens)
 	/** prevent javascript from getting ahead of itself */
-	let duplicate = false
+	duplicate = false
 	if (letters.length > 0 && duplicate === false) {
 		for (let i = 0; i < letters.length; i++) {
 			duplicate = true
@@ -78,8 +81,12 @@ function checkKeyHit(letterKey) {
 			}
 		}
 		if (letterKey === 'enter') {
-			const button = document.querySelector('.quiz-action .btn')
+			let button = document.querySelector('.quiz-action .btn')
 			if (button) button.click()
+			else {
+				button = document.querySelector('.general-action .btn')
+				if (button) button.click()
+			}
 			duplicate = true
 		} else if (letterKey === 'backspace') {
 			const button = document.querySelector('.token-deselect .btn')
