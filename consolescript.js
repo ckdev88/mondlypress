@@ -4,6 +4,7 @@
 // TODO add some timeout or debounce per key press
 
 /** Array of letters in the page */
+console.log('Loading plugin!')
 let letters = []
 
 /** Stack to enable backspace/undo */
@@ -105,12 +106,38 @@ function checkKeyHit(letterKey) {
  */
 document.addEventListener('keyup', (event) => {
 	event.preventDefault()
-	if (document.querySelector('.quiz-instruction-wrapper').id !== currentQuizId) {
-		letters = []
-		lettersRemoved = []
-		tokens = document.getElementsByClassName('token')
-		currentQuizId = document.querySelector('.quiz-instruction-wrapper').id
+	console.log('pressed key', event.key)
+	if (event.key.toLowerCase() === 'enter') {
+		let generalActionButtonContinue = document.querySelector('.general-action .btn')
+		if (generalActionButtonContinue) {
+			console.log('pressing generalActionButtonContinue with key:', event.key)
+			// testing to see if we can do this without assigning id
+			generalActionButtonContinue.click()
+		}
 	}
+	if (event.key === '?') {
+		let playAudioButton = document.getElementsByClassName('play-audio')[0]
+		if (playAudioButton) {
+			console.log('pressing playAudioButton with key:', event.key)
+			// testing to see if we can do this without assigning id
+			playAudioButton.click()
+		}
+	}
+
+	let quizInstructionWrapper = document.querySelector('.quiz-instruction-wrapper')
+	if (quizInstructionWrapper) {
+		console.log('quizInstructionWrapper is set')
+		// quizInstructionWrapperId = quizInstructionWrapper.id
+		if (quizInstructionWrapper.id !== currentQuizId) {
+			console.log('page has changed, need to reload vars: letters, lettersRemoved')
+			letters = []
+			lettersRemoved = []
+			tokens = document.getElementsByClassName('token')
+			currentQuizId = document.querySelector('.quiz-instruction-wrapper').id
+		}
+	}
+	console.log('letters', letters)
+	console.log('hitme')
 	let letterKey = event.key.toLowerCase()
 	checkKeyHit(letterKey)
 })
