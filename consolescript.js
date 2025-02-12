@@ -68,15 +68,11 @@ function composeLetters(tokens) {
  * @param letterKey {string}
  * @returns {void}
  */
-let duplicate
-
 function checkKeyHit(letterKey) {
 	if (letters.length < 1) composeLetters(tokens)
 	/** prevent javascript from getting ahead of itself */
-	duplicate = false
 	if (letters.length > 0 && duplicate === false) {
 		for (let i = 0; i < letters.length; i++) {
-			duplicate = true
 			if (letters[i].letter === letterKey) {
 				const targetNode = document.getElementById(letters[i].id)
 				if (targetNode) {
@@ -94,13 +90,11 @@ function checkKeyHit(letterKey) {
 				button = document.querySelector('.general-action .btn')
 				if (button) button.click()
 			}
-			duplicate = true
 		} else if (letterKey === 'backspace') {
 			const button = document.querySelector('.token-deselect .btn')
 			if (button) button.click()
 			const redo = lettersRemoved.splice(-1, 1)
 			if (lettersRemoved.length > 0) letters.push(redo[0])
-			duplicate = true
 		}
 	}
 }
