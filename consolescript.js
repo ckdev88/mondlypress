@@ -1,7 +1,14 @@
 // TODO add detection, only activate if useful
 // TODO add Check detection and click
 // TODO add Backspace detection and click
+
+/** Array of letters in the page */
 const letters = []
+
+/** Stack to enable backspace/undo */
+const lettersRemoved = []
+
+/** Special characters to simplify */
 const charmap = {
 	á: 'a',
 	ä: 'a',
@@ -42,25 +49,42 @@ function composeLetters() {
 		letters.push(letterObj)
 	}
 }
+
+/** 
+ * Main function where keys are pressed and buttons get pushed
+ * @param letterKey {string}
+ * @returns {void}
+ */
 function checkKeyHit(letterKey) {
 	if (letters.length < 1) composeLetters()
 	/** prevent javascript from getting ahead of itself */
 	let duplicate = false
 	if (letters.length > 0 && duplicate === false) {
 		for (let i = 0; i < letters.length; i++) {
+			duplicate = true
 			if (letters[i].letter === letterKey) {
 				document.getElementById(letters[i].id).click()
-				letters.splice(i, 1)
-				duplicate = true
-				console.log('ring')
+				const remo = letters.splice(i,1)
+				lettersRemoved.push(remo[0])
 				break
 			}
+		}
+		if (letterKey === 'enter') {
+			const button = document.querySelector('.quiz-action .btn')
+			if (button) button.click()
+			duplicate = true
+		} else if (letterKey === 'backspace') {
+			const button = document.querySelector('.token-deselect .btn')
+			if (button) button.click()
+			const redo = lettersRemoved.splice(-1,1)
+			if (lettersRemoved.length > 0) letters.push(redo[0])
+			duplicate = true
 		}
 	}
 }
 
 /**
- * Check the pressed key with the word (letters array)
+ * Listen for keyups and do the thing, you know...
  * @param letterKey {string}
  * @returns {void}
  */
