@@ -5,9 +5,13 @@
 
 /** Array of letters in the page */
 console.log('Loading plugin!')
+/** @type {string[]} */
 let letters = []
 
-/** Stack to enable backspace/undo */
+/**
+ * Stack to enable backspace/undo
+ * @type {string[]}
+ */
 let lettersRemoved = []
 let tokens = document.getElementsByClassName('token')
 let currentQuizId
@@ -45,6 +49,7 @@ function simplifyToken(token) {
 
 /**
  * Find letters, their id's and match it with charmap
+ * @param tokens {HTMLCollection}
  * @returns {void}
  */
 function composeLetters(tokens) {
