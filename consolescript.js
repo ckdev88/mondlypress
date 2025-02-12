@@ -4,9 +4,19 @@
 // TODO add some timeout or debounce per key press
 
 /** Array of letters in the page */
+console.log('Loading mondlypress...')
+/** @type {string[]} */
 let letters = []
 
-/** Stack to enable backspace/undo */
+/** @type {number} -- artificial delay to deal with heavy/slow scripting on Mondly-side */
+const TIMEOUT_COMPOSE = 200
+/** @type {number} -- artificial delay, logically follows loop delayed by TIMEOUT_COMPOSE */
+const TIMEOUT_PRESS = 150
+
+/**
+ * Stack to enable backspace/undo
+ * @type {string[]}
+ */
 let lettersRemoved = []
 let tokens = document.getElementsByClassName('token')
 let currentQuizId
@@ -28,6 +38,7 @@ const charmap = {
 	ē: 'e',
 	ê: 'e',
 	è: 'e',
+	í: 'i',
 	ñ: 'n',
 }
 
@@ -44,16 +55,23 @@ function simplifyToken(token) {
 
 /**
  * Find letters, their id's and match it with charmap
+ * @param tokens {HTMLCollection}
  * @returns {void}
  */
 function composeLetters(tokens) {
-	for (let token of tokens) {
-		const letterObj = {
-			id: token.getAttribute('id'),
-			letter: simplifyToken(token.innerText),
+	let isWords = false
+	letters.splice(0, letters.length)
+	setTimeout(() => {
+		for (let token of tokens) {
+			if (token.innerText.length > 1) isWords = true
+			const letterObj = {
+				id: token.getAttribute('id'),
+				letter: simplifyToken(token.innerText),
+			}
+			letters.push(letterObj)
 		}
-		letters.push(letterObj)
-	}
+		// if (isWords) console.log('is words') TODO in following features, make these type-able too
+	}, TIMEOUT_COMPOSE)
 }
 
 /**
@@ -61,39 +79,66 @@ function composeLetters(tokens) {
  * @param letterKey {string}
  * @returns {void}
  */
-let duplicate
-
 function checkKeyHit(letterKey) {
-	if (letters.length < 1) composeLetters(tokens)
-	/** prevent javascript from getting ahead of itself */
-	duplicate = false
-	if (letters.length > 0 && duplicate === false) {
-		for (let i = 0; i < letters.length; i++) {
-			duplicate = true
-			if (letters[i].letter === letterKey) {
-				const targetNode = document.getElementById(letters[i].id)
-				if (targetNode) {
-					targetNode.click()
-					const remo = letters.splice(i, 1)
-					lettersRemoved.push(remo[0])
-				}
-				break
+	let useTokens = false
+	if (document.getElementsByClassName('token').length > 0) useTokens = true
+
+	// control keys
+	if (letterKey === 'P') {
+		let playAudioButton = document.getElementsByClassName('play-audio')[0]
+		if (playAudioButton) playAudioButton.click()
+	} else if (letterKey === 'Enter') {
+		let button = document.querySelector('.quiz-action .btn')
+		if (button) button.click()
+	}
+
+	// if using letters and words which usually need a finger and/or a mouse
+	if (useTokens) {
+		let quizInstructionWrapper = document.querySelector('.quiz-instruction-wrapper')
+		if (quizInstructionWrapper) {
+			// check if quiz has changed, if yes, letters need to be re-composed
+			if (quizInstructionWrapper.id !== currentQuizId) {
+				// TODO this can/must be optimized
+				letters = []
+				lettersRemoved = []
+				tokens = document.getElementsByClassName('token')
+				composeLetters(tokens)
+				currentQuizId = document.querySelector('.quiz-instruction-wrapper').id
 			}
 		}
-		if (letterKey === 'enter') {
-			let button = document.querySelector('.quiz-action .btn')
-			if (button) button.click()
-			else {
-				button = document.querySelector('.general-action .btn')
-				if (button) button.click()
-			}
-			duplicate = true
-		} else if (letterKey === 'backspace') {
+		// rebuild letters array on R press
+		if (letterKey === 'R') {
+			// TODO this should not be necessary in a perfect world, if not used anymore, remove it
+			tokens = document.getElementsByClassName('token')
+			composeLetters(tokens)
+		} else if (letterKey === 'Backspace') {
+			// push backspaced characters into buffer stack
 			const button = document.querySelector('.token-deselect .btn')
 			if (button) button.click()
 			const redo = lettersRemoved.splice(-1, 1)
 			if (lettersRemoved.length > 0) letters.push(redo[0])
-			duplicate = true
+		} else {
+			letterKey = letterKey.toLowerCase()
+			setTimeout(() => {
+				if (letters.length > 0) {
+					for (let i = 0; i < letters.length; i++) {
+						if (letters[i].letter === letterKey) {
+							const targetNode = document.getElementById(letters[i].id)
+							if (targetNode) {
+								targetNode.click()
+								const remo = letters.splice(i, 1)
+								lettersRemoved.push(remo[0])
+							}
+							break
+						}
+					}
+				}
+			}, TIMEOUT_PRESS)
+		}
+	} else {
+		if (letterKey === 'Enter') {
+			let button = document.querySelector('.general-action .btn')
+			if (button) button.click()
 		}
 	}
 }
@@ -105,12 +150,7 @@ function checkKeyHit(letterKey) {
  */
 document.addEventListener('keyup', (event) => {
 	event.preventDefault()
-	if (document.querySelector('.quiz-instruction-wrapper').id !== currentQuizId) {
-		letters = []
-		lettersRemoved = []
-		tokens = document.getElementsByClassName('token')
-		currentQuizId = document.querySelector('.quiz-instruction-wrapper').id
-	}
-	let letterKey = event.key.toLowerCase()
-	checkKeyHit(letterKey)
+	checkKeyHit(event.key)
 })
+
+console.log('... mondlypress olé!')
