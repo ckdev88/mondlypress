@@ -8,6 +8,8 @@ console.log('Loading plugin!')
 /** @type {string[]} */
 let letters = []
 
+/** @type {number} -- artificial delay to deal with heavy/slow scripting on Mondly-side */
+const TIMEOUT_COMPOSE = 200
 /**
  * Stack to enable backspace/undo
  * @type {string[]}
@@ -54,13 +56,19 @@ function simplifyToken(token) {
  * @returns {void}
  */
 function composeLetters(tokens) {
-	for (let token of tokens) {
-		const letterObj = {
-			id: token.getAttribute('id'),
-			letter: simplifyToken(token.innerText),
+	let isWords = false
+	letters.splice(0, letters.length)
+	setTimeout(() => {
+		for (let token of tokens) {
+			if (token.innerText.length > 1) isWords = true
+			const letterObj = {
+				id: token.getAttribute('id'),
+				letter: simplifyToken(token.innerText),
+			}
+			letters.push(letterObj)
 		}
-		letters.push(letterObj)
-	}
+		// if (isWords) console.log('is words') TODO in following features, make these type-able too
+	}, TIMEOUT_COMPOSE)
 }
 
 /**
