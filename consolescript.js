@@ -7,11 +7,13 @@
 console.log('Loading mondlypress...')
 /** @type {string[]} */
 let letters = []
+let isWords = false
+var wordCapturesLetters = ''
 
 /** @type {number} -- artificial delay to deal with heavy/slow scripting on Mondly-side */
-const TIMEOUT_COMPOSE = 200
+const TIMEOUT_COMPOSE = 150
 /** @type {number} -- artificial delay, logically follows loop delayed by TIMEOUT_COMPOSE */
-const TIMEOUT_PRESS = 150
+const TIMEOUT_PRESS = 100
 
 /**
  * Stack to enable backspace/undo
@@ -47,9 +49,19 @@ const charmap = {
  * @param token {string}
  * @returns {string}
  */
-function simplifyToken(token) {
+function simplifyToken(token, isWords = false) {
 	token = token.toLowerCase()
-	if (charmap[token]) return charmap[token]
+	if (isWords) {
+		let braveNewWord = token.split('')
+		for (let i = 0; i < braveNewWord.length; i++) {
+			if (charmap[braveNewWord[i]] !== undefined) {
+				braveNewWord[i] = charmap[braveNewWord[i]]
+			}
+		}
+		return braveNewWord.join('')
+	} else {
+		if (charmap[token]) return charmap[token]
+	}
 	return token
 }
 
@@ -59,18 +71,16 @@ function simplifyToken(token) {
  * @returns {void}
  */
 function composeLetters(tokens) {
-	let isWords = false
 	letters.splice(0, letters.length)
 	setTimeout(() => {
 		for (let token of tokens) {
 			if (token.innerText.length > 1) isWords = true
 			const letterObj = {
 				id: token.getAttribute('id'),
-				letter: simplifyToken(token.innerText),
+				letter: simplifyToken(token.innerText, isWords),
 			}
 			letters.push(letterObj)
 		}
-		// if (isWords) console.log('is words') TODO in following features, make these type-able too
 	}, TIMEOUT_COMPOSE)
 }
 
@@ -104,6 +114,7 @@ function checkKeyHit(letterKey) {
 				tokens = document.getElementsByClassName('token')
 				composeLetters(tokens)
 				currentQuizId = document.querySelector('.quiz-instruction-wrapper').id
+				if (document.querySelector('.tokens-list .token').innerText.length > 1) isWords = true
 			}
 		}
 		// rebuild letters array on R press
@@ -119,21 +130,45 @@ function checkKeyHit(letterKey) {
 			if (lettersRemoved.length > 0) letters.push(redo[0])
 		} else {
 			letterKey = letterKey.toLowerCase()
-			setTimeout(() => {
-				if (letters.length > 0) {
-					for (let i = 0; i < letters.length; i++) {
-						if (letters[i].letter === letterKey) {
-							const targetNode = document.getElementById(letters[i].id)
-							if (targetNode) {
-								targetNode.click()
-								const remo = letters.splice(i, 1)
-								lettersRemoved.push(remo[0])
+
+			if (isWords && letterKey !== ' ' && letterKey.length === 1) {
+				wordCapturesLetters += letterKey
+			}
+			if (isWords && letterKey === ' ') {
+				setTimeout(() => {
+					if (letters.length > 0) {
+						for (let i = 0; i < letters.length; i++) {
+							if (letters[i].letter === wordCapturesLetters) {
+								const targetNode = document.getElementById(letters[i].id)
+								if (targetNode) {
+									targetNode.click()
+									const remo = letters.splice(i, 1)
+									lettersRemoved.push(remo[0])
+								}
+								break
 							}
-							break
 						}
 					}
-				}
-			}, TIMEOUT_PRESS)
+					wordCapturesLetters = ''
+				}, TIMEOUT_PRESS)
+			} else if (!isWords) {
+				// in case of letters
+				setTimeout(() => {
+					if (letters.length > 0) {
+						for (let i = 0; i < letters.length; i++) {
+							if (letters[i].letter === letterKey) {
+								const targetNode = document.getElementById(letters[i].id)
+								if (targetNode) {
+									targetNode.click()
+									const remo = letters.splice(i, 1)
+									lettersRemoved.push(remo[0])
+								}
+								break
+							}
+						}
+					}
+				}, TIMEOUT_PRESS)
+			}
 		}
 	} else {
 		if (letterKey === 'Enter') {
