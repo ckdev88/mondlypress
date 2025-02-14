@@ -121,7 +121,12 @@ function checkKeyHit(letterKey) {
 				if (document.querySelector('.tokens-list .token').innerText.length > 1) isWords = true
 			}
 		}
-		// rebuild letters array on R press
+		// rebuild letters array on L press // TODO this should not be necessary in a perfect world, if not used anymore, remove it
+		if (letterKey === 'L') {
+			isWords = false
+			tokens = document.getElementsByClassName('token')
+			composeLetters(tokens)
+		}
 		if (letterKey === 'R') {
 			// TODO this should not be necessary in a perfect world, if not used anymore, remove it
 			tokens = document.getElementsByClassName('token')
@@ -134,10 +139,11 @@ function checkKeyHit(letterKey) {
 			if (lettersRemoved.length > 0) letters.push(redo[0])
 		} else {
 			letterKey = letterKey.toLowerCase()
-
 			if (isWords && letterKey !== ' ' && letterKey.length === 1) {
 				wordCapturesLetters += letterKey
+				console.log('typing...', wordCapturesLetters) // useful, keep for now
 			}
+
 			if (isWords && letterKey === ' ') {
 				setTimeout(() => {
 					if (letters.length > 0) {
@@ -156,7 +162,7 @@ function checkKeyHit(letterKey) {
 					wordCapturesLetters = ''
 				}, TIMEOUT_PRESS)
 			} else if (!isWords) {
-				// in case of letters
+				// TODO not yet optimal, keeps stuck on isWords=true sometimes
 				setTimeout(() => {
 					if (letters.length > 0) {
 						for (let i = 0; i < letters.length; i++) {
