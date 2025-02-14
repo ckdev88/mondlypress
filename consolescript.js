@@ -43,6 +43,7 @@ const charmap = {
 	í: 'i',
 	ñ: 'n',
 }
+const strippers = ['.', ',', '?']
 
 /**
  * Converts special char/token into simple one so it can be matched with pressed key
@@ -56,6 +57,8 @@ function simplifyToken(token, isWords = false) {
 		for (let i = 0; i < braveNewWord.length; i++) {
 			if (charmap[braveNewWord[i]] !== undefined) {
 				braveNewWord[i] = charmap[braveNewWord[i]]
+			} else if (strippers.includes(braveNewWord[i])) {
+				braveNewWord[i] = ''
 			}
 		}
 		return braveNewWord.join('')
