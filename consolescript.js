@@ -100,11 +100,10 @@ function checkKeyHit(letterKey) {
 
 	// control keys
 	if (letterKey === 'P') {
-		let playAudioButton = document.getElementsByClassName('play-audio')[0]
-		if (playAudioButton) playAudioButton.click()
 	} else if (letterKey === 'Enter') {
 		let button = document.querySelector('.quiz-action .btn')
 		if (button) button.click()
+			playAudio()
 	}
 
 	// if using letters and words which usually need a finger and/or a mouse
@@ -187,6 +186,11 @@ function checkKeyHit(letterKey) {
 			if (button) button.click()
 		}
 	}
+}
+
+function playAudio() {
+	let playAudioButton = document.getElementsByClassName('play-audio')[0]
+	if (playAudioButton) playAudioButton.click()
 }
 
 /**
