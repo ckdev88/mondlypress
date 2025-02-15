@@ -192,6 +192,18 @@ function checkKeyHit(letterKey) {
 			let button = document.querySelector('.general-action .btn')
 			if (button) button.click()
 		}
+		if (letterKey === '3') {
+			let areaValue
+			let area
+			if (document.querySelector('textarea')) {
+				area = document.querySelector('textarea')
+				areaValue = document.querySelector('textarea').value
+			} else if (document.querySelector('input')) {
+				area = document.querySelector('input')
+				areaValue = document.querySelector('input').value
+			}
+			area.value = areaValue.slice(0, areaValue.length - 1)
+		}
 	}
 }
 
