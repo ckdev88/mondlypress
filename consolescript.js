@@ -2,6 +2,7 @@
 // TODO add Check detection and click
 // TODO add Backspace detection and click
 // TODO add some timeout or debounce per key press
+// TODO add throttling for writing single letters when !isWords
 
 /** Array of letters in the page */
 console.log('Loading mondlypress...')
@@ -128,6 +129,7 @@ function checkKeyHit(letterKey) {
 			}
 		}
 		// rebuild letters array on L press // TODO this should not be necessary in a perfect world, if not used anymore, remove it
+
 		if (letterKey === '1') {
 			isWords = false
 			tokens = document.getElementsByClassName('token')
