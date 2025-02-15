@@ -132,11 +132,15 @@ function checkKeyHit(letterKey) {
 			tokens = document.getElementsByClassName('token')
 			composeLetters(tokens)
 		} else if (letterKey === 'Backspace') {
-			// push backspaced characters into buffer stack
-			const button = document.querySelector('.token-deselect .btn')
-			if (button) button.click()
-			const redo = lettersRemoved.splice(-1, 1)
-			if (lettersRemoved.length > 0) letters.push(redo[0])
+			if (isWords) {
+				wordCapturesLetters = wordCapturesLetters.slice(0, wordCapturesLetters.length - 1)
+			} else {
+				// push backspaced characters into buffer stack
+				const button = document.querySelector('.token-deselect .btn')
+				if (button) button.click()
+				const redo = lettersRemoved.splice(-1, 1)
+				if (lettersRemoved.length > 0) letters.push(redo[0])
+			}
 		} else {
 			letterKey = letterKey.toLowerCase()
 			if (isWords && letterKey !== ' ' && letterKey.length === 1) {
