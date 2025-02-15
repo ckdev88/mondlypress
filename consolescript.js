@@ -45,7 +45,7 @@ const charmap = {
 	ô: 'o',
 	ó: 'o',
 }
-const strippers = ['.', ',', '?','\'']
+const strippers = ['.', ',', '?', "'"]
 
 /**
  * Converts special char/token into simple one so it can be matched with pressed key
