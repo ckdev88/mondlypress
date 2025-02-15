@@ -79,6 +79,7 @@ function simplifyToken(token, isWords = false) {
  */
 function composeLetters(tokens) {
 	letters.splice(0, letters.length)
+	let lettersize = 0
 	setTimeout(() => {
 		for (let token of tokens) {
 			if (token.innerText.length > 1) isWords = true
@@ -87,6 +88,7 @@ function composeLetters(tokens) {
 				letter: simplifyToken(token.innerText, isWords),
 			}
 			letters.push(letterObj)
+			lettersize += token.innerText.length
 		}
 	}, TIMEOUT_COMPOSE)
 }
@@ -125,7 +127,11 @@ function checkKeyHit(letterKey) {
 				tokens = document.getElementsByClassName('token')
 				composeLetters(tokens)
 				currentQuizId = document.querySelector('.quiz-instruction-wrapper').id
-				if (document.querySelector('.tokens-list .token').innerText.length > 1) isWords = true
+				if (document.querySelector('.tokens-list .token').innerText.length > 1) {
+					isWords = true
+				} else {
+					isWords = false
+				}
 			}
 		}
 		// rebuild letters array on L press // TODO this should not be necessary in a perfect world, if not used anymore, remove it
