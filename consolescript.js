@@ -11,9 +11,9 @@ let isWords = false
 var wordCapturesLetters = ''
 
 /** @type {number} -- artificial delay to deal with heavy/slow scripting on Mondly-side */
-const TIMEOUT_COMPOSE = 150
+const TIMEOUT_COMPOSE = 90
 /** @type {number} -- artificial delay, logically follows loop delayed by TIMEOUT_COMPOSE */
-const TIMEOUT_PRESS = 100
+const TIMEOUT_PRESS = 120
 
 /**
  * Stack to enable backspace/undo
