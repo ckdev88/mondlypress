@@ -98,12 +98,8 @@ function checkKeyHit(letterKey) {
 	let useTokens = false
 	if (document.getElementsByClassName('token').length > 0) useTokens = true
 
-	// control keys
-	if (letterKey === 'P') {
-	} else if (letterKey === 'Enter') {
-		let button = document.querySelector('.quiz-action .btn')
-		if (button) button.click()
-			playAudio()
+	if (letterKey === '3') {
+		playAudio()
 	}
 
 	// if using letters and words which usually need a finger and/or a mouse
@@ -122,12 +118,12 @@ function checkKeyHit(letterKey) {
 			}
 		}
 		// rebuild letters array on L press // TODO this should not be necessary in a perfect world, if not used anymore, remove it
-		if (letterKey === 'L') {
+		if (letterKey === '1') {
 			isWords = false
 			tokens = document.getElementsByClassName('token')
 			composeLetters(tokens)
 		}
-		if (letterKey === 'R') {
+		if (letterKey === '2') {
 			// TODO this should not be necessary in a perfect world, if not used anymore, remove it
 			tokens = document.getElementsByClassName('token')
 			composeLetters(tokens)
@@ -144,23 +140,24 @@ function checkKeyHit(letterKey) {
 		} else {
 			letterKey = letterKey.toLowerCase()
 			if (isWords && letterKey !== ' ' && letterKey.length === 1) {
-				wordCapturesLetters += letterKey
-				console.log('typing...', wordCapturesLetters) // useful, keep for now
+				if (letterKey !== '1' && letterKey !== '2' && letterKey !== '3') {
+					wordCapturesLetters += letterKey
 			}
 
-			if (isWords && letterKey === ' ') {
+			if (isWords && (letterKey === ' ' || letterKey === 'Enter')) {
 				setTimeout(() => {
-					if (letters.length > 0) {
-						for (let i = 0; i < letters.length; i++) {
-							if (letters[i].letter === wordCapturesLetters) {
-								const targetNode = document.getElementById(letters[i].id)
-								if (targetNode) {
-									targetNode.click()
-									const remo = letters.splice(i, 1)
-									lettersRemoved.push(remo[0])
-								}
-								break
+					// if (letters.length > 0) {
+					for (let i = 0; i < letters.length; i++) {
+						if (letters[i].letter === wordCapturesLetters) {
+							const targetNode = document.getElementById(letters[i].id)
+							console.log('gogogo')
+							if (targetNode) {
+								targetNode.click()
+								const remo = letters.splice(i, 1)
+								lettersRemoved.push(remo[0])
+								// console.log('removed letters:', lettersRemoved.join('').toString())
 							}
+							break
 						}
 					}
 					wordCapturesLetters = ''
@@ -183,6 +180,12 @@ function checkKeyHit(letterKey) {
 					}
 				}, TIMEOUT_PRESS)
 			}
+		}
+		// control keys
+		if (letterKey === 'Enter') {
+			// TODO press SPACE first with a short timeout -- WRONG! we need the action of space, not space itself, because of the infinite loop that will create
+			let button = document.querySelector('.quiz-action .btn')
+			if (button) button.click()
 		}
 	} else {
 		if (letterKey === 'Enter') {
