@@ -102,6 +102,15 @@ function checkKeyHit(letterKey) {
 	if (letterKey === '3') {
 		playAudio()
 	}
+	if (letterKey === 'Enter') {
+		let button = document.querySelector('.quiz-action .btn')
+		if (!button) {
+			button = document.querySelector('.general-action .btn')
+		}
+		if (button) {
+			button.click()
+		}
+	}
 
 	// if using letters and words which usually need a finger and/or a mouse
 	if (useTokens) {
@@ -145,7 +154,7 @@ function checkKeyHit(letterKey) {
 					wordCapturesLetters += letterKey
 			}
 
-			if (isWords && (letterKey === ' ' || letterKey === 'Enter')) {
+			if (isWords && letterKey === ' ') {
 				setTimeout(() => {
 					// if (letters.length > 0) {
 					for (let i = 0; i < letters.length; i++) {
@@ -182,17 +191,7 @@ function checkKeyHit(letterKey) {
 				}, TIMEOUT_PRESS)
 			}
 		}
-		// control keys
-		if (letterKey === 'Enter') {
-			// TODO press SPACE first with a short timeout -- WRONG! we need the action of space, not space itself, because of the infinite loop that will create
-			let button = document.querySelector('.quiz-action .btn')
-			if (button) button.click()
-		}
 	} else {
-		if (letterKey === 'Enter') {
-			let button = document.querySelector('.general-action .btn')
-			if (button) button.click()
-		}
 		if (letterKey === '3') {
 			let areaValue
 			let area
