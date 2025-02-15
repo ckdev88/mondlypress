@@ -44,6 +44,7 @@ const charmap = {
 	ñ: 'n',
 	ô: 'o',
 	ó: 'o',
+	õ: 'o'
 }
 const strippers = ['.', ',', '?', "'"]
 
