@@ -160,6 +160,7 @@ function checkKeyHit(letterKey) {
 			if (isWords && letterKey !== ' ' && letterKey.length === 1) {
 				if (letterKey !== '1' && letterKey !== '2' && letterKey !== '3') {
 					wordCapturesLetters += letterKey
+				}
 			}
 
 			if (isWords && letterKey === ' ') {
