@@ -74,6 +74,8 @@ function simplifyToken(token, isWords = false) {
 
 /**
  * Find letters, their id's and match it with charmap
+/**
+ * Find letters, their id's in the DOM and match it with charmap
  * @param tokens {HTMLCollection}
  * @returns {void}
  */
