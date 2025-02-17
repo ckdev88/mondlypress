@@ -57,9 +57,9 @@ const strippers = ['.', ',', '?', "'"]
  * @param {'letter'|'word'} answerType
  * @returns {string}
  */
-function simplifyToken(token, answerType = 'letter') {
+function simplifyToken(token, charType = 'letter') {
 	token = token.toLowerCase()
-	if (answerType === 'word') {
+	if (charType === 'word') {
 		let braveNewWord = token.split('')
 		for (let i = 0; i < braveNewWord.length; i++) {
 			if (charmap[braveNewWord[i]] !== undefined) {
@@ -83,18 +83,16 @@ function simplifyToken(token, answerType = 'letter') {
  * @returns {void}
  */
 function composeLetters(tokens) {
+	let charType = 'letter'
 	letters.splice(0, letters.length)
-	let lettersize = 0
 	setTimeout(() => {
 		for (let token of tokens) {
-			if (token.innerText.length > 1) answerType = 'word'
+			if (token.innerText.length > 1) charType = 'word'
 			const letterObj = {
 				id: token.getAttribute('id'),
-				letter: simplifyToken(token.innerText, answerType),
+				letter: simplifyToken(token.innerText, charType),
 			}
 			letters.push(letterObj)
-			console.log('======== letterObj:', letterObj)
-			lettersize += token.innerText.length
 		}
 	}, TIMEOUT_COMPOSE)
 }
