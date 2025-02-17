@@ -107,6 +107,7 @@ function checkKeyHit(letterKey) {
 	}
 	if (letterKey === 'Enter') {
 		let button = document.querySelector('.quiz-action .btn')
+		typeShower('', true)
 		if (!button) {
 			button = document.querySelector('.general-action .btn')
 		}
@@ -148,6 +149,7 @@ function checkKeyHit(letterKey) {
 		} else if (letterKey === 'Backspace') {
 			if (isWords) {
 				wordCapturesLetters = wordCapturesLetters.slice(0, wordCapturesLetters.length - 1)
+				typeShower(wordCapturesLetters)
 			} else {
 				// push backspaced characters into buffer stack
 				const button = document.querySelector('.token-deselect .btn')
@@ -160,6 +162,7 @@ function checkKeyHit(letterKey) {
 			if (isWords && letterKey !== ' ' && letterKey.length === 1) {
 				if (letterKey !== '1' && letterKey !== '2' && letterKey !== '3') {
 					wordCapturesLetters += letterKey
+					typeShower(wordCapturesLetters)
 				}
 			}
 
@@ -180,6 +183,7 @@ function checkKeyHit(letterKey) {
 						}
 					}
 					wordCapturesLetters = ''
+					typeShower(wordCapturesLetters)
 				}, TIMEOUT_PRESS)
 			} else if (!isWords) {
 				// TODO not yet optimal, keeps stuck on isWords=true sometimes
@@ -219,6 +223,49 @@ function checkKeyHit(letterKey) {
 function playAudio() {
 	let playAudioButton = document.getElementsByClassName('play-audio')[0]
 	if (playAudioButton) playAudioButton.click()
+}
+
+/**
+ * Showing the character typed to form words, helps not "typing in the dark"
+ * @param {string} chars - Characters passed by buffer
+ * @param {boolean} clear - Remove when not needed
+ * @returns {void}
+ */
+function typeShower(chars = '', clear = false) {
+	/** @type {HTMLElement | null} - TypeShower HTML element */
+	let ts = null
+	if (document.getElementById('typeshower')) {
+		ts = document.getElementById('typeshower')
+		if (clear) {
+			ts.remove()
+			return
+		} else {
+			if (chars === '') ts.style.opacity = '0'
+			else ts.style.opacity = '.9'
+		}
+		ts.innerText = chars
+	} else if (clear === false) {
+		ts = document.createElement('div')
+		ts.id = 'typeshower'
+		ts.innerText = chars
+		ts.style.backgroundColor = '#dedae2'
+		ts.style.width = 'auto'
+		ts.style.position = 'fixed'
+		ts.style.height = 'calc(1.25em + 40px)'
+		ts.style.lineHeight = '1.25em'
+		ts.style.bottom = '40px'
+		ts.style.right = '40px'
+		ts.style.padding = '20px'
+		ts.style.fontSize = '30px'
+		ts.style.color = '#1e173c'
+		ts.style.borderRadius = '12px'
+		ts.style.fontWeight = 'bold'
+		ts.style.zIndex = '999999'
+		ts.style.transition = 'width .12s linear, height .12s linear, opacity .12s ease-in-out'
+		ts.style.opacity = '.9'
+		document.querySelector('.ember-application').prepend(ts)
+		ts.innerText = chars
+	}
 }
 
 /**
