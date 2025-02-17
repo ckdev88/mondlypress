@@ -2,13 +2,15 @@
 // TODO add Check detection and click
 // TODO add Backspace detection and click
 // TODO add some timeout or debounce per key press
-// TODO add throttling for writing single letters when !isWords
+// TODO add throttling for writing single letters when answerType=letter
 
 /** Array of letters in the page */
 console.log('Loading mondlypress...')
 /** @type {string[]} */
 let letters = []
-let isWords = false
+/** @type {'letter'|'word'} - Types of answers that the mouse clicks */
+let answerType = 'letter'
+
 var wordCapturesLetters = ''
 
 /** @type {number} -- artificial delay to deal with heavy/slow scripting on Mondly-side */
@@ -51,12 +53,13 @@ const strippers = ['.', ',', '?', "'"]
 
 /**
  * Converts special char/token into simple one so it can be matched with pressed key
- * @param token {string}
+ * @param {string} token
+ * @param {'letter'|'word'} answerType
  * @returns {string}
  */
-function simplifyToken(token, isWords = false) {
+function simplifyToken(token, answerType = 'letter') {
 	token = token.toLowerCase()
-	if (isWords) {
+	if (answerType === 'word') {
 		let braveNewWord = token.split('')
 		for (let i = 0; i < braveNewWord.length; i++) {
 			if (charmap[braveNewWord[i]] !== undefined) {
@@ -84,12 +87,13 @@ function composeLetters(tokens) {
 	let lettersize = 0
 	setTimeout(() => {
 		for (let token of tokens) {
-			if (token.innerText.length > 1) isWords = true
+			if (token.innerText.length > 1) answerType = 'word'
 			const letterObj = {
 				id: token.getAttribute('id'),
-				letter: simplifyToken(token.innerText, isWords),
+				letter: simplifyToken(token.innerText, answerType),
 			}
 			letters.push(letterObj)
+			console.log('======== letterObj:', letterObj)
 			lettersize += token.innerText.length
 		}
 	}, TIMEOUT_COMPOSE)
@@ -131,16 +135,16 @@ function checkKeyHit(letterKey) {
 				composeLetters(tokens)
 				currentQuizId = document.querySelector('.quiz-instruction-wrapper').id
 				if (document.querySelector('.tokens-list .token').innerText.length > 1) {
-					isWords = true
+					answerType = 'word'
 				} else {
-					isWords = false
+					answerType = 'letter'
 				}
 			}
 		}
 
 		if (letterKey === '1') {
 			// rebuild letters array // TODO this should not be necessary in a perfect world, if not used anymore, remove it
-			isWords = false
+			answerType = 'letter'
 			tokens = document.getElementsByClassName('token')
 			composeLetters(tokens)
 		}
@@ -149,7 +153,7 @@ function checkKeyHit(letterKey) {
 			tokens = document.getElementsByClassName('token')
 			composeLetters(tokens)
 		} else if (letterKey === 'Backspace') {
-			if (isWords) {
+			if (answerType === 'word') {
 				wordCapturesLetters = wordCapturesLetters.slice(0, wordCapturesLetters.length - 1)
 				typeShower(wordCapturesLetters)
 			} else {
@@ -161,14 +165,15 @@ function checkKeyHit(letterKey) {
 			}
 		} else {
 			letterKey = letterKey.toLowerCase()
-			if (isWords && letterKey !== ' ' && letterKey.length === 1) {
+			if (answerType === 'word' && letterKey !== ' ' && letterKey.length === 1) {
 				if (letterKey !== '1' && letterKey !== '2' && letterKey !== '3') {
 					wordCapturesLetters += letterKey
 					typeShower(wordCapturesLetters)
 				}
 			}
 
-			if (isWords && letterKey === ' ') {
+			if (answerType === 'word' && letterKey === ' ') {
+				console.log('letters/words', letters)
 				setTimeout(() => {
 					// if (letters.length > 0) {
 					for (let i = 0; i < letters.length; i++) {
@@ -187,8 +192,8 @@ function checkKeyHit(letterKey) {
 					wordCapturesLetters = ''
 					typeShower(wordCapturesLetters)
 				}, TIMEOUT_PRESS)
-			} else if (!isWords) {
-				// TODO not yet optimal, keeps stuck on isWords=true sometimes
+			} else if (answerType === 'letter') {
+				// TODO not yet optimal, keeps stuck on answerType=word sometimes
 				setTimeout(() => {
 					if (letters.length > 0) {
 						for (let i = 0; i < letters.length; i++) {
