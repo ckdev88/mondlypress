@@ -1,8 +1,7 @@
-// TODO add detection, only activate if useful
 // TODO add Check detection and click
-// TODO add Backspace detection and click
 // TODO add some timeout or debounce per key press
 // TODO add throttling for writing single letters when answerType=letter
+// TODO when typing a word wrong, after ENTER in typeshower give feedback (red or so)
 
 /** Array of letters in the page */
 console.log('Loading mondlypress...')
