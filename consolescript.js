@@ -135,9 +135,9 @@ function checkKeyHit(letterKey) {
 				}
 			}
 		}
-		// rebuild letters array on L press // TODO this should not be necessary in a perfect world, if not used anymore, remove it
 
 		if (letterKey === '1') {
+			// rebuild letters array // TODO this should not be necessary in a perfect world, if not used anymore, remove it
 			isWords = false
 			tokens = document.getElementsByClassName('token')
 			composeLetters(tokens)
