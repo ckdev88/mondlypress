@@ -52,7 +52,7 @@ const strippers = ['.', ',', '?', "'"]
 /**
  * Converts special char/token into simple one so it can be matched with pressed key
  * @param {string} token
- * @param {'letter'|'word'} answerType
+ * @param {'letter'|'word'} charType
  * @returns {string}
  */
 function simplifyToken(token, charType = 'letter') {
@@ -175,7 +175,7 @@ function submitMultipleChoice() {
 	}
 
 	for (i = 0; i < multiplechoiceAnswers.length; i++) {
-		if (wordCapturesLetters.trim() === multiplechoiceAnswers[i].answer) {
+		if (wordCapturesLetters.trim() === simplifyToken(multiplechoiceAnswers[i].answer, 'word')) {
 			button = document.getElementById(`option-${i}`)
 			if (button) button.click()
 			break
