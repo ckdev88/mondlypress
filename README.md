@@ -19,20 +19,18 @@ The plugin will find the letters on the page when a word or phrase needs to be s
 - Assign `ENTER` to submit/check
 
 ## Desired result
-###Primary
+### Primary
 No need for mouse when spelling out a word in Mondly, including submitting the answer.
-Backspace is part of secondary.
 
 ### Secondary
 When a sentence needs to be composed, enable keyboard users to, either:
-- type the words, use `SPACE` to seperate sequence.
-- type the numbers of the sequence (constraint: only works with < 10 words)
+- type the words, use `SPACE` to seperate sequence. IMPORTANT: this should've been in primary, no release without this feature.
 - When multiple choice of 4 choices, connect pressing `a` to the first option, `b` to the second, et cetera.
 
 ### Tertiary
-- Backspace: `BACKSPACE`
+- ~~Backspace: `BACKSPACE`~~
 - Skip microphone: `ESC`
-- Skip "lesson completed" Continue-button: `ENTER`
+- ~~Skip "lesson completed" Continue-button: `ENTER`~~
 
 # Roadmap
 1) simple script in console with event listeners
