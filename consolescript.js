@@ -320,24 +320,23 @@ function typeShower(chars = '', clear = false) {
 		ts = document.createElement('div')
 		ts.id = 'typeshower'
 		ts.innerText = chars
-		// ts.style.backgroundColor = '#dedae2'
-		ts.style.backgroundColor = '#aeaae2'
+		ts.style.backgroundColor = '#dedae2'
 		ts.style.width = 'auto'
 		ts.style.position = 'fixed'
 		ts.style.height = 'calc(1.25em + 40px)'
 		ts.style.lineHeight = '1.25em'
-		ts.style.left= '50%'
-		ts.style.marginLeft = 'auto'
-		ts.style.marginRight = 'auto'
-		ts.style.bottom = '120px'
+		ts.style.top = '50vh'
+		ts.style.left = '50%'
+		ts.style.transform = 'translateX(-50%)'
 		ts.style.padding = '20px'
-		ts.style.fontSize = '30px'
+		ts.style.fontSize = '34px'
 		ts.style.color = '#1e173c'
 		ts.style.borderRadius = '12px'
 		ts.style.fontWeight = 'bold'
 		ts.style.zIndex = '999999'
-		ts.style.transition = 'width .12s linear, height .12s linear, opacity .12s ease-in-out'
+		ts.style.transition = 'width .25s linear, height .25s linear, opacity .15s linear'
 		ts.style.opacity = '.9'
+		ts.style.boxShadow = '0 0 .2em rgba(0,0,0,.3)'
 		document.querySelector('.ember-application').prepend(ts)
 		ts.innerText = chars
 	}
