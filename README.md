@@ -21,7 +21,6 @@ The plugin will find the letters on the page when a word or phrase needs to be s
 ## Desired result
 ### Primary
 No need for mouse when spelling out a word in Mondly, including submitting the answer.
-Backspace is part of secondary.
 
 ### Secondary
 When a sentence needs to be composed, enable keyboard users to, either:
