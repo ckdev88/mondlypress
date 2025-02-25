@@ -7,14 +7,20 @@
 console.log('Loading mondlypress...')
 /** @type {string[]} */
 let letters = []
-/** @type {'letter'|'word'|'multiplechoice'} - Types of answers that the mouse clicks */
-let answerType = 'letter'
+/** @type {'letter'|'word'|'multiplechoice'|'misc'} - Types of answers that the mouse clicks */
+let answerType = 'misc'
 var wordCapturesLetters = ''
+/** @type {boolean} -- switch to prevent typing too fast when answerType equals letter */
+let throttleWait = false
+/** @type {boolean} -- tokens are areas containing a clickable/touchable letter or word for the quiz */
+let useTokens = false
 
 /** @type {number} -- artificial delay to deal with heavy/slow scripting on Mondly-side */
 const TIMEOUT_COMPOSE = 90
 /** @type {number} -- artificial delay, logically follows loop delayed by TIMEOUT_COMPOSE */
 const TIMEOUT_PRESS = 120
+/** @type {number} -- throttling timeout to prevent stack being disaligned with submitted letters */
+const TIMEOUT_THROTTLE = 550
 
 /**
  * Stack to enable backspace/undo
@@ -103,7 +109,7 @@ function removeGender(combi = '') {
 /**
  * Find letters, their id's in the DOM and match it with charmap
  * @param {HTMLCollection} tokens
- * @param {'letter'|'word'} answerType - multiplechoice is handles separately in submitMultipleChoice
+ * @param {'letter'|'word'} answerType - multiplechoice is handled separately in submitMultipleChoice
  * @returns {void}
  */
 function composeLetters(tokens) {
@@ -194,13 +200,12 @@ function submitMultipleChoice() {
  * @returns {void}
  */
 function checkKeyHit(letterKey) {
-	let useTokens = false
 	if (
 		document.getElementsByClassName('token').length > 0 ||
 		document.getElementById('option-0')?.innerText.length > 0
 	) {
 		useTokens = true
-	}
+	} else useTokens = false
 
 	if (letterKey === '3') {
 		playAudio()
@@ -286,6 +291,7 @@ function checkKeyHit(letterKey) {
 			}
 		}
 	} else {
+		answerType = 'misc'
 		if (letterKey === '3') {
 			let areaValue
 			let area
@@ -343,7 +349,7 @@ function typeShower(chars = '', clear = false) {
 		ts.style.borderRadius = '12px'
 		ts.style.fontWeight = 'bold'
 		ts.style.zIndex = '999999'
-		ts.style.transition = 'width .25s linear, height .25s linear, opacity .15s linear'
+		// ts.style.transition = 'width .25s linear, height .25s linear, opacity .15s linear'
 		ts.style.opacity = '.9'
 		ts.style.boxShadow = '0 0 .2em rgba(0,0,0,.3)'
 		document.querySelector('.ember-application').prepend(ts)
@@ -373,7 +379,20 @@ document.addEventListener('keyup', (event) => {
 	if (event.key === 'Enter') {
 		event.preventDefault()
 		checkKeyHit('Enter')
-	} else checkKeyHit(event.key)
+	} else {
+		if (answerType === 'letter') {
+			if (throttleWait) {
+				typeShower('Slow down...')
+				return
+			}
+			throttleWait = true
+			setTimeout(() => {
+				throttleWait = false
+				typeShower('', true)
+			}, TIMEOUT_THROTTLE)
+		}
+		checkKeyHit(event.key)
+	}
 })
 document.addEventListener('keypress', (event) => {
 	if (event.key === 'Enter') {
