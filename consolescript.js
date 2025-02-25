@@ -46,7 +46,7 @@ const charmap = {
 	ô: 'o',
 	ó: 'o',
 	õ: 'o',
-	ú: 'u'
+	ú: 'u',
 }
 const strippers = ['.', ',', '?', "'"]
 
@@ -161,7 +161,7 @@ function submitWordOfWords(letters) {
 			}
 		}
 		wordCapturesLetters = ''
-		typeShower(wordCapturesLetters)
+		typeShower(wordCapturesLetters, true)
 	}, TIMEOUT_PRESS)
 }
 
@@ -211,11 +211,16 @@ function checkKeyHit(letterKey) {
 		let button = null
 		if (answerType === 'multiplechoice') submitMultipleChoice()
 		else {
-			wordCapturesLetters = ''
+			if (answerType === 'letter') wordCapturesLetters = '' // TODO see if conditional can be removed
 			button = document.querySelector('.quiz-action .btn')
 		}
 		if (!button) button = document.querySelector('.general-action .btn')
-		if (button) button.click()
+		if (answerType === 'word') {// TODO see if timeout really is needed
+
+			setTimeout(() => {
+				if (button) button.click()
+			}, 500)
+		} else if (button) button.click()
 	}
 
 	// if using letters, words and multiplechoice which usually need a finger and/or a mouse
@@ -266,7 +271,10 @@ function checkKeyHit(letterKey) {
 					typeShower(wordCapturesLetters)
 				}
 			}
-			if (answerType === 'word' && letterKey === ' ') {
+			if (
+				answerType === 'word' &&
+				(letterKey === ' ' || (wordCapturesLetters !== '' && letterKey === 'enter'))
+			) {
 				submitWordOfWords(letters)
 			} else if (answerType === 'multiplechoice') {
 				if (letterKey.length === 1 && letterKey !== '1' && letterKey !== '2' && letterKey !== '3') {
@@ -357,12 +365,20 @@ function getAnswerType() {
 
 /**
  * Listen for keyups and do the thing, you know...
- * @param letterKey {string}
- * @returns {void}
  */
+document.addEventListener('keydown', (event) => {
+	if (event.key === 'Enter') event.preventDefault()
+})
 document.addEventListener('keyup', (event) => {
-	event.preventDefault()
-	checkKeyHit(event.key)
+	if (event.key === 'Enter') {
+		event.preventDefault()
+		checkKeyHit('Enter')
+	} else checkKeyHit(event.key)
+})
+document.addEventListener('keypress', (event) => {
+	if (event.key === 'Enter') {
+		event.preventDefault()
+	}
 })
 
 console.log('... mondlypress olé!')
