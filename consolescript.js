@@ -161,7 +161,7 @@ function submitWordOfWords(letters) {
 			}
 		}
 		wordCapturesLetters = ''
-		typeShower(wordCapturesLetters)
+		typeShower(wordCapturesLetters, true)
 	}, TIMEOUT_PRESS)
 }
 
