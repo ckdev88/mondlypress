@@ -200,13 +200,6 @@ function submitMultipleChoice() {
  * @returns {void}
  */
 function checkKeyHit(letterKey) {
-	if (
-		document.getElementsByClassName('token').length > 0 ||
-		document.getElementById('option-0')?.innerText.length > 0
-	) {
-		useTokens = true
-	} else useTokens = false
-
 	if (letterKey === '3') {
 		playAudio()
 	}
@@ -220,8 +213,8 @@ function checkKeyHit(letterKey) {
 			button = document.querySelector('.quiz-action .btn')
 		}
 		if (!button) button = document.querySelector('.general-action .btn')
-		if (answerType === 'word') {// TODO see if timeout really is needed
-
+		if (answerType === 'word') {
+			// TODO see if timeout really is needed
 			setTimeout(() => {
 				if (button) button.click()
 			}, 500)
@@ -232,8 +225,6 @@ function checkKeyHit(letterKey) {
 	if (useTokens) {
 		let quizInstructionWrapper = document.querySelector('.quiz-instruction-wrapper')
 		if (quizInstructionWrapper) {
-			let answerType = getAnswerType(tokens)
-
 			// check if quiz has changed, if yes, letters need to be re-composed
 			if (quizInstructionWrapper.id !== currentQuizId) {
 				// TODO this can/must be optimized
@@ -247,17 +238,7 @@ function checkKeyHit(letterKey) {
 			}
 		}
 
-		if (letterKey === '1') {
-			// rebuild letters array // TODO this should not be necessary in a perfect world, if not used anymore, remove it
-			tokens = document.getElementsByClassName('token')
-			answerType = getAnswerType()
-			if (tokens.length > 0) composeLetters(tokens)
-		}
-		if (letterKey === '2') {
-			// TODO this should not be necessary in a perfect world, if not used anymore, remove it
-			tokens = document.getElementsByClassName('token')
-			composeLetters(tokens)
-		} else if (letterKey === 'Backspace') {
+		if (letterKey === 'Backspace') {
 			if (answerType === 'word' || answerType === 'multiplechoice') {
 				wordCapturesLetters = wordCapturesLetters.slice(0, wordCapturesLetters.length - 1)
 				typeShower(wordCapturesLetters)
@@ -271,7 +252,7 @@ function checkKeyHit(letterKey) {
 		} else {
 			letterKey = letterKey.toLowerCase()
 			if (answerType === 'word' && letterKey !== ' ' && letterKey.length === 1) {
-				if (letterKey !== '1' && letterKey !== '2' && letterKey !== '3') {
+				if (letterKey !== '1' && letterKey !== '3') {
 					wordCapturesLetters += letterKey
 					typeShower(wordCapturesLetters)
 				}
@@ -282,7 +263,7 @@ function checkKeyHit(letterKey) {
 			) {
 				submitWordOfWords(letters)
 			} else if (answerType === 'multiplechoice') {
-				if (letterKey.length === 1 && letterKey !== '1' && letterKey !== '2' && letterKey !== '3') {
+				if (letterKey.length === 1 && letterKey !== '1' && letterKey !== '3') {
 					wordCapturesLetters += letterKey
 					typeShower(wordCapturesLetters)
 				}
@@ -291,7 +272,7 @@ function checkKeyHit(letterKey) {
 			}
 		}
 	} else {
-		answerType = 'misc'
+		// automatically backspace when typing '3' to playAudio
 		if (letterKey === '3') {
 			let areaValue
 			let area
@@ -360,12 +341,19 @@ function typeShower(chars = '', clear = false) {
 /**
  * @returns {'letter'|'word'|'multiplechoice'}
  */
-function getAnswerType() {
+function getAnswerType(useTokens = true) {
 	let totalchars = 0
-	for (let token of tokens) totalchars += token.innerText.length
-	if (totalchars === tokens.length) answerType = 'letter'
-	if (totalchars > tokens.length) answerType = 'word'
-	if (document.getElementById('option-0')) answerType = 'multiplechoice'
+	if (useTokens) {
+		for (let token of tokens) totalchars += token.innerText.length
+		if (totalchars === tokens.length) {
+			console.log('setting answertype to letter', tokens.length)
+			answerType = 'letter'
+		} else if (totalchars > tokens.length) answerType = 'word'
+		if (document.getElementById('option-0')) answerType = 'multiplechoice'
+	} else {
+		answerType = 'misc'
+	}
+
 	return answerType
 }
 
@@ -376,11 +364,20 @@ document.addEventListener('keydown', (event) => {
 	if (event.key === 'Enter') event.preventDefault()
 })
 document.addEventListener('keyup', (event) => {
+	if (
+		document.getElementsByClassName('token').length > 0 ||
+		document.getElementById('option-0')?.innerText.length > 0
+	)
+		useTokens = true
+	else useTokens = false
+
+	answerType = getAnswerType(useTokens)
+
 	if (event.key === 'Enter') {
 		event.preventDefault()
 		checkKeyHit('Enter')
 	} else {
-		if (answerType === 'letter') {
+		if (answerType === 'letter' && event.key !== 'Backspace') {
 			if (throttleWait) {
 				typeShower('Slow down...')
 				return
