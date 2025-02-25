@@ -33,10 +33,10 @@ When a sentence needs to be composed, enable keyboard users to, either:
 - ~~Skip "lesson completed" Continue-button: `ENTER`~~
 
 # Roadmap
-1) simple script in console with event listeners
-2) code primary requirements as extension
+1) ~~simple script in console with event listeners~~
+2) ~~code primary requirements as extension~~
 3) setup manifest
-4) create logo
+4) ~~create logo~~
 5) apply extension Firefox for test
 6) apply extension Chromium/Google for test
 7) code secondary requirements
