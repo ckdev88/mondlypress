@@ -1,0 +1,17 @@
+{
+	"manifest_version": 2,
+	"name": "MondlyPress",
+	"version": "0.1",
+
+	"description": "Use keyboard while using Mondly.",
+	"icons": {
+		"48": "icons/mondlypress-48.png"
+	},
+
+	"content_scripts": [
+		{
+			"matches": ["*://app.mondly.com/*"],
+			"js": ["consolescript.js"]
+		}
+	]
+}
