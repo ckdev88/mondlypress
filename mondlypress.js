@@ -43,7 +43,6 @@ const charmap = {
 	ç: 'c',
 	ë: 'e',
 	é: 'e',
-	é: 'e',
 	ē: 'e',
 	ê: 'e',
 	è: 'e',
@@ -189,7 +188,7 @@ function submitMultipleChoice() {
 		}
 	}
 	setTimeout(() => {
-		button = document.querySelector('.quiz-action .btn')
+		button = document.querySelector('.quiz-action .btn-secondary')
 		button.click()
 	}, TIMEOUT_PRESS)
 }
@@ -210,7 +209,7 @@ function checkKeyHit(letterKey) {
 		if (answerType === 'multiplechoice') submitMultipleChoice()
 		else {
 			if (answerType === 'letter') wordCapturesLetters = '' // TODO see if conditional can be removed
-			button = document.querySelector('.quiz-action .btn')
+			button = document.querySelector('.quiz-action .btn-secondary')
 		}
 		if (!button) button = document.querySelector('.general-action .btn')
 		if (answerType === 'word') {
@@ -345,10 +344,8 @@ function getAnswerType(useTokens = true) {
 	let totalchars = 0
 	if (useTokens) {
 		for (let token of tokens) totalchars += token.innerText.length
-		if (totalchars === tokens.length) {
-			console.log('setting answertype to letter', tokens.length)
-			answerType = 'letter'
-		} else if (totalchars > tokens.length) answerType = 'word'
+		if (totalchars === tokens.length) answerType = 'letter'
+		else if (totalchars > tokens.length) answerType = 'word'
 		if (document.getElementById('option-0')) answerType = 'multiplechoice'
 	} else {
 		answerType = 'misc'
