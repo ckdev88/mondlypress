@@ -49,7 +49,7 @@ The same can be done for Chromium based browsers (Chrome, Brave, Etc.)
 5. ~~apply extension Firefox for test~~
 6. ~~apply extension Chromium/Google for test~~
 7. ~~apply secondary requirements~~
-8. code cleanup & bugfixing & final tests
+8. ~~code cleanup & bugfixing & final tests~~
 9. publish on Firefox and/or Google :: works, but lost Google dev. account, so not published there at the moment.
 10. apply nice things still to do
 11. update to infinity
