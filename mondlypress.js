@@ -7,14 +7,20 @@
 console.log('Loading mondlypress...')
 /** @type {string[]} */
 let letters = []
-/** @type {'letter'|'word'|'multiplechoice'} - Types of answers that the mouse clicks */
-let answerType = 'letter'
+/** @type {'letter'|'word'|'multiplechoice'|'misc'} - Types of answers that the mouse clicks */
+let answerType = 'misc'
 var wordCapturesLetters = ''
+/** @type {boolean} -- switch to prevent typing too fast when answerType equals letter */
+let throttleWait = false
+/** @type {boolean} -- tokens are areas containing a clickable/touchable letter or word for the quiz */
+let useTokens = false
 
 /** @type {number} -- artificial delay to deal with heavy/slow scripting on Mondly-side */
 const TIMEOUT_COMPOSE = 90
 /** @type {number} -- artificial delay, logically follows loop delayed by TIMEOUT_COMPOSE */
 const TIMEOUT_PRESS = 120
+/** @type {number} -- throttling timeout to prevent stack being disaligned with submitted letters */
+const TIMEOUT_THROTTLE = 550
 
 /**
  * Stack to enable backspace/undo
@@ -36,7 +42,6 @@ const charmap = {
 	ã: 'a',
 	ç: 'c',
 	ë: 'e',
-	é: 'e',
 	é: 'e',
 	ē: 'e',
 	ê: 'e',
@@ -103,7 +108,7 @@ function removeGender(combi = '') {
 /**
  * Find letters, their id's in the DOM and match it with charmap
  * @param {HTMLCollection} tokens
- * @param {'letter'|'word'} answerType - multiplechoice is handles separately in submitMultipleChoice
+ * @param {'letter'|'word'} answerType - multiplechoice is handled separately in submitMultipleChoice
  * @returns {void}
  */
 function composeLetters(tokens) {
@@ -183,7 +188,7 @@ function submitMultipleChoice() {
 		}
 	}
 	setTimeout(() => {
-		button = document.querySelector('.quiz-action .btn')
+		button = document.querySelector('.quiz-action .btn-secondary')
 		button.click()
 	}, TIMEOUT_PRESS)
 }
@@ -194,14 +199,6 @@ function submitMultipleChoice() {
  * @returns {void}
  */
 function checkKeyHit(letterKey) {
-	let useTokens = false
-	if (
-		document.getElementsByClassName('token').length > 0 ||
-		document.getElementById('option-0')?.innerText.length > 0
-	) {
-		useTokens = true
-	}
-
 	if (letterKey === '3') {
 		playAudio()
 	}
@@ -212,11 +209,11 @@ function checkKeyHit(letterKey) {
 		if (answerType === 'multiplechoice') submitMultipleChoice()
 		else {
 			if (answerType === 'letter') wordCapturesLetters = '' // TODO see if conditional can be removed
-			button = document.querySelector('.quiz-action .btn')
+			button = document.querySelector('.quiz-action .btn-secondary')
 		}
 		if (!button) button = document.querySelector('.general-action .btn')
-		if (answerType === 'word') {// TODO see if timeout really is needed
-
+		if (answerType === 'word') {
+			// TODO see if timeout really is needed
 			setTimeout(() => {
 				if (button) button.click()
 			}, 500)
@@ -227,8 +224,6 @@ function checkKeyHit(letterKey) {
 	if (useTokens) {
 		let quizInstructionWrapper = document.querySelector('.quiz-instruction-wrapper')
 		if (quizInstructionWrapper) {
-			let answerType = getAnswerType(tokens)
-
 			// check if quiz has changed, if yes, letters need to be re-composed
 			if (quizInstructionWrapper.id !== currentQuizId) {
 				// TODO this can/must be optimized
@@ -242,17 +237,7 @@ function checkKeyHit(letterKey) {
 			}
 		}
 
-		if (letterKey === '1') {
-			// rebuild letters array // TODO this should not be necessary in a perfect world, if not used anymore, remove it
-			tokens = document.getElementsByClassName('token')
-			answerType = getAnswerType()
-			if (tokens.length > 0) composeLetters(tokens)
-		}
-		if (letterKey === '2') {
-			// TODO this should not be necessary in a perfect world, if not used anymore, remove it
-			tokens = document.getElementsByClassName('token')
-			composeLetters(tokens)
-		} else if (letterKey === 'Backspace') {
+		if (letterKey === 'Backspace') {
 			if (answerType === 'word' || answerType === 'multiplechoice') {
 				wordCapturesLetters = wordCapturesLetters.slice(0, wordCapturesLetters.length - 1)
 				typeShower(wordCapturesLetters)
@@ -266,7 +251,7 @@ function checkKeyHit(letterKey) {
 		} else {
 			letterKey = letterKey.toLowerCase()
 			if (answerType === 'word' && letterKey !== ' ' && letterKey.length === 1) {
-				if (letterKey !== '1' && letterKey !== '2' && letterKey !== '3') {
+				if (letterKey !== '1' && letterKey !== '3') {
 					wordCapturesLetters += letterKey
 					typeShower(wordCapturesLetters)
 				}
@@ -277,7 +262,7 @@ function checkKeyHit(letterKey) {
 			) {
 				submitWordOfWords(letters)
 			} else if (answerType === 'multiplechoice') {
-				if (letterKey.length === 1 && letterKey !== '1' && letterKey !== '2' && letterKey !== '3') {
+				if (letterKey.length === 1 && letterKey !== '1' && letterKey !== '3') {
 					wordCapturesLetters += letterKey
 					typeShower(wordCapturesLetters)
 				}
@@ -286,6 +271,7 @@ function checkKeyHit(letterKey) {
 			}
 		}
 	} else {
+		// automatically backspace when typing '3' to playAudio
 		if (letterKey === '3') {
 			let areaValue
 			let area
@@ -343,7 +329,7 @@ function typeShower(chars = '', clear = false) {
 		ts.style.borderRadius = '12px'
 		ts.style.fontWeight = 'bold'
 		ts.style.zIndex = '999999'
-		ts.style.transition = 'width .25s linear, height .25s linear, opacity .15s linear'
+		// ts.style.transition = 'width .25s linear, height .25s linear, opacity .15s linear'
 		ts.style.opacity = '.9'
 		ts.style.boxShadow = '0 0 .2em rgba(0,0,0,.3)'
 		document.querySelector('.ember-application').prepend(ts)
@@ -354,12 +340,17 @@ function typeShower(chars = '', clear = false) {
 /**
  * @returns {'letter'|'word'|'multiplechoice'}
  */
-function getAnswerType() {
+function getAnswerType(useTokens = true) {
 	let totalchars = 0
-	for (let token of tokens) totalchars += token.innerText.length
-	if (totalchars === tokens.length) answerType = 'letter'
-	if (totalchars > tokens.length) answerType = 'word'
-	if (document.getElementById('option-0')) answerType = 'multiplechoice'
+	if (useTokens) {
+		for (let token of tokens) totalchars += token.innerText.length
+		if (totalchars === tokens.length) answerType = 'letter'
+		else if (totalchars > tokens.length) answerType = 'word'
+		if (document.getElementById('option-0')) answerType = 'multiplechoice'
+	} else {
+		answerType = 'misc'
+	}
+
 	return answerType
 }
 
@@ -370,10 +361,32 @@ document.addEventListener('keydown', (event) => {
 	if (event.key === 'Enter') event.preventDefault()
 })
 document.addEventListener('keyup', (event) => {
+	if (
+		document.getElementsByClassName('token').length > 0 ||
+		document.getElementById('option-0')?.innerText.length > 0
+	)
+		useTokens = true
+	else useTokens = false
+
+	answerType = getAnswerType(useTokens)
+
 	if (event.key === 'Enter') {
 		event.preventDefault()
 		checkKeyHit('Enter')
-	} else checkKeyHit(event.key)
+	} else {
+		if (answerType === 'letter' && event.key !== 'Backspace') {
+			if (throttleWait) {
+				typeShower('Slow down...')
+				return
+			}
+			throttleWait = true
+			setTimeout(() => {
+				throttleWait = false
+				typeShower('', true)
+			}, TIMEOUT_THROTTLE)
+		}
+		checkKeyHit(event.key)
+	}
 })
 document.addEventListener('keypress', (event) => {
 	if (event.key === 'Enter') {
