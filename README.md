@@ -12,7 +12,7 @@ Learning a new language with Mondly is pretty good, wouldn't it be great if it c
 
 ## So?
 Let's write a browser plugin that accommodates the keyboard user.
-The plugin will find the letters on the page when a word or phrase needs to be spelled matches these with the pressed key on the keyboard.
+The plugin will find the letters on the page. When a word or phrase needs to be spelled, it matches these with the pressed key on the keyboard.
 
 ## How?
 - Create event listeners for alphanumeric values and `-` character
@@ -24,11 +24,11 @@ The plugin will find the letters on the page when a word or phrase needs to be s
 
 ## Nice! 
 **No need for mouse when:**
-- spelling out a word in Mondly, or removing letter with BACKSPACE
-- including submitting the answer with ENTER
-- composing sentences, separating words with SPACE 
-- skip screens like _Lesson completed_ faster with ENTER
-- (re)playing the audio with 3
+- spelling out a word in Mondly, or removing letter with `BACKSPACE`
+- including submitting the answer with `ENTER`
+- composing sentences, separating words with `SPACE` 
+- skip screens like _Lesson completed_ faster with `ENTER`
+- (re)playing the audio with `3`
 
 ### Nice things still to do
 - Skip microphone: `ESC`
