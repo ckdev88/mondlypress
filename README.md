@@ -1,10 +1,11 @@
-# Use keyboard to spell words with **mondlypress**
+# Use keyboard to spell words in Mondly with **mondlypress**
+This applies to Mondly: https://app.mondly.com .
+Spelling a word by clicking the mouse on a letter over and over can become a bit tedious. Not anymore!
+Install this neat little plugin and you'll be able to use the keyboard.
 
-## First! Known caveats
-- Made for QWERTY keyboard layout
-- Currently only for simple alphanumeric keys (A-Z, a-z)
-	**Example:** in case of Portuguese: when quizzed to spell `lição` you can just type `licao` and have it approved. It will not work the other way around.
-
+## Installation
+Go to https://addons.mozilla.org/en-US/firefox/addon/mondlypress/ for firefox, or just download the ZIP file and add it yourself.
+The same can be done for Chromium based browsers (Chrome, Brave, Etc.)
 
 ## Why?
 So, with that out the way... 
@@ -29,6 +30,11 @@ The plugin will find the letters on the page. When a word or phrase needs to be 
 - composing sentences, separating words with `SPACE` 
 - skip screens like _Lesson completed_ faster with `ENTER`
 - (re)playing the audio with `3`
+
+## Known caveats
+This is for alphanumeric layouts/languages, using A-Z, a-z. 
+If a word you want to type has accents, like `lição`, you can just type `licao`.
+
 
 ### Nice things still to do
 - Skip microphone: `ESC`
