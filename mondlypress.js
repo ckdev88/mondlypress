@@ -3,9 +3,7 @@
 // TODO add throttling for writing single letters when answerType=letter
 // TODO when typing a word wrong, after ENTER in typeshower give feedback (red or so)
 
-/** Array of letters in the page */
-console.log('Loading mondlypress...')
-/** @type {string[]} */
+/** @type {string[]} -- Array of letters in the page */
 let letters = []
 /** @type {'letter'|'word'|'multiplechoice'|'misc'} - Types of answers that the mouse clicks */
 let answerType = 'misc'
@@ -28,6 +26,8 @@ const TIMEOUT_THROTTLE = 550
  */
 let lettersRemoved = []
 let tokens = document.getElementsByClassName('token')
+
+/** @type {string} - holds current quiz id in buffer to compare when the quiz changes */
 let currentQuizId
 if (document.querySelector('.quiz-instruction-wrapper')) {
 	currentQuizId = document.querySelector('.quiz-instruction-wrapper').id
@@ -224,9 +224,8 @@ function checkKeyHit(letterKey) {
 	if (useTokens) {
 		let quizInstructionWrapper = document.querySelector('.quiz-instruction-wrapper')
 		if (quizInstructionWrapper) {
-			// check if quiz has changed, if yes, letters need to be re-composed
+			// check if quiz has changed, if yes, recalibrate
 			if (quizInstructionWrapper.id !== currentQuizId) {
-				// TODO this can/must be optimized
 				letters = []
 				lettersRemoved = []
 				currentQuizId = document.querySelector('.quiz-instruction-wrapper').id
@@ -329,7 +328,6 @@ function typeShower(chars = '', clear = false) {
 		ts.style.borderRadius = '12px'
 		ts.style.fontWeight = 'bold'
 		ts.style.zIndex = '999999'
-		// ts.style.transition = 'width .25s linear, height .25s linear, opacity .15s linear'
 		ts.style.opacity = '.9'
 		ts.style.boxShadow = '0 0 .2em rgba(0,0,0,.3)'
 		document.querySelector('.ember-application').prepend(ts)
@@ -394,4 +392,4 @@ document.addEventListener('keypress', (event) => {
 	}
 })
 
-console.log('... mondlypress olé!')
+console.log('MondlyPress loaded! Boa sorte mutto bene merci!')
