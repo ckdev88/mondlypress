@@ -1,0 +1,19 @@
+{
+	"manifest_version": 2,
+	"name": "MondlyPress",
+	"version": "1.2",
+	"description": "Use keyboard in Mondly.",
+	"icons": {
+		"16": "icon-16.png",
+		"32": "icon-32.png",
+		"48": "icon-48.png",
+		"64": "icon-64.png",
+		"128": "icon-128.png"
+	},
+	"content_scripts": [
+		{
+			"matches": ["*://app.mondly.com/*"],
+			"js": ["mondlypress.js"]
+		}
+	]
+}
