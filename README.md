@@ -40,6 +40,9 @@ The same can be done for Chromium based browsers (Chrome, Brave, Etc.)
 
 ### Nice things still to do
 - ~~Skip microphone: `ESC`~~
+- use `BACKSPACE` to recover spelled word from stack to buffer
+- when typing a word which is not in buffer, after ENTER in typeshower give feedback (red or so)
+
 
 ### Roadmap
 1. ~~simple script in console with event listeners~~
