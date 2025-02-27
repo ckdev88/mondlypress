@@ -199,10 +199,9 @@ function submitMultipleChoice() {
  * @returns {void}
  */
 function checkKeyHit(letterKey) {
-	if (letterKey === '3') {
-		playAudio()
-	}
-	if (letterKey === 'Enter') {
+	if (letterKey === '3') playAudio()
+	else if (letterKey === 'Escape') skipMicrophone()
+	else if (letterKey === 'Enter') {
 		/** @type {Element|null} */
 		typeShower('', true)
 		let button = null
@@ -289,6 +288,10 @@ function checkKeyHit(letterKey) {
 function playAudio() {
 	let playAudioButton = document.getElementsByClassName('play-audio')[0]
 	if (playAudioButton) playAudioButton.click()
+}
+function skipMicrophone() {
+	let skipMicrophoneButton = document.querySelector('.skip')
+	if (skipMicrophoneButton) skipMicrophoneButton.click()
 }
 
 /**
@@ -383,6 +386,7 @@ document.addEventListener('keyup', (event) => {
 				typeShower('', true)
 			}, TIMEOUT_THROTTLE)
 		}
+
 		checkKeyHit(event.key)
 	}
 })
