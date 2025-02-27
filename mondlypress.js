@@ -203,6 +203,7 @@ function checkKeyHit(letterKey) {
 	else if (letterKey === 'Escape') skipMicrophone()
 	else if (letterKey === 'Enter') {
 		/** @type {Element|null} */
+		console.log('enter pressed yo')
 		typeShower('', true)
 		let button = null
 		if (answerType === 'multiplechoice') submitMultipleChoice()
@@ -212,10 +213,14 @@ function checkKeyHit(letterKey) {
 		}
 		if (!button) button = document.querySelector('.general-action .btn')
 		if (answerType === 'word') {
+			console.log('word, click extra stuff')
 			// TODO see if timeout really is needed
 			setTimeout(() => {
-				if (button) button.click()
-			}, 500)
+				if (button) {
+					button.click()
+					console.log('extra stuff clicked')
+				} else console.log('no?')
+			}, TIMEOUT_PRESS)
 		} else if (button) button.click()
 	}
 
@@ -362,6 +367,7 @@ document.addEventListener('keydown', (event) => {
 	if (event.key === 'Enter') event.preventDefault()
 })
 document.addEventListener('keyup', (event) => {
+	console.log('event.key:', event.key)
 	if (
 		document.getElementsByClassName('token').length > 0 ||
 		document.getElementById('option-0')?.innerText.length > 0
