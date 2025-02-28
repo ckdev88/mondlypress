@@ -18,7 +18,7 @@ const TIMEOUT_COMPOSE = 90
 /** @type {number} -- artificial delay, logically follows loop delayed by TIMEOUT_COMPOSE */
 const TIMEOUT_PRESS = 120
 /** @type {number} -- throttling timeout to prevent stack being disaligned with submitted letters */
-const TIMEOUT_THROTTLE = 550
+const TIMEOUT_THROTTLE = 500
 
 /**
  * Stack to enable backspace/undo
@@ -212,10 +212,9 @@ function checkKeyHit(letterKey) {
 		}
 		if (!button) button = document.querySelector('.general-action .btn')
 		if (answerType === 'word') {
-			// TODO see if timeout really is needed
 			setTimeout(() => {
 				if (button) button.click()
-			}, 500)
+			}, TIMEOUT_THROTTLE)
 		} else if (button) button.click()
 	}
 
