@@ -39,7 +39,10 @@ The same can be done for Chromium based browsers (Chrome, Brave, Etc.)
 ## The Future
 
 ### Nice things still to do
-- Skip microphone: `ESC`
+- ~~Skip microphone: `ESC`~~
+- use `BACKSPACE` to recover spelled word from stack to buffer
+- when typing a word which is not in buffer, after ENTER in typeshower give feedback (red or so)
+
 
 ### Roadmap
 1. ~~simple script in console with event listeners~~
@@ -51,5 +54,5 @@ The same can be done for Chromium based browsers (Chrome, Brave, Etc.)
 7. ~~apply secondary requirements~~
 8. ~~code cleanup & bugfixing & final tests~~
 9. publish on Firefox and/or Google :: works, but lost Google dev. account, so not published there at the moment.
-10. apply nice things still to do
+10. ~~apply nice things still to do~~
 11. update to infinity

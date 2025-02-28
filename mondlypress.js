@@ -1,7 +1,3 @@
-// TODO add Check detection and click
-// TODO add some timeout or debounce per key press
-// TODO add throttling for writing single letters when answerType=letter
-// TODO when typing a word wrong, after ENTER in typeshower give feedback (red or so)
 
 /** @type {string[]} -- Array of letters in the page */
 let letters = []
@@ -18,7 +14,7 @@ const TIMEOUT_COMPOSE = 90
 /** @type {number} -- artificial delay, logically follows loop delayed by TIMEOUT_COMPOSE */
 const TIMEOUT_PRESS = 120
 /** @type {number} -- throttling timeout to prevent stack being disaligned with submitted letters */
-const TIMEOUT_THROTTLE = 550
+const TIMEOUT_THROTTLE = 500
 
 /**
  * Stack to enable backspace/undo
@@ -199,10 +195,9 @@ function submitMultipleChoice() {
  * @returns {void}
  */
 function checkKeyHit(letterKey) {
-	if (letterKey === '3') {
-		playAudio()
-	}
-	if (letterKey === 'Enter') {
+	if (letterKey === '3') playAudio()
+	else if (letterKey === 'Escape') skipMicrophone()
+	else if (letterKey === 'Enter') {
 		/** @type {Element|null} */
 		typeShower('', true)
 		let button = null
@@ -213,10 +208,9 @@ function checkKeyHit(letterKey) {
 		}
 		if (!button) button = document.querySelector('.general-action .btn')
 		if (answerType === 'word') {
-			// TODO see if timeout really is needed
 			setTimeout(() => {
 				if (button) button.click()
-			}, 500)
+			}, TIMEOUT_THROTTLE)
 		} else if (button) button.click()
 	}
 
@@ -289,6 +283,10 @@ function checkKeyHit(letterKey) {
 function playAudio() {
 	let playAudioButton = document.getElementsByClassName('play-audio')[0]
 	if (playAudioButton) playAudioButton.click()
+}
+function skipMicrophone() {
+	let skipMicrophoneButton = document.querySelector('.skip')
+	if (skipMicrophoneButton) skipMicrophoneButton.click()
 }
 
 /**
@@ -383,6 +381,7 @@ document.addEventListener('keyup', (event) => {
 				typeShower('', true)
 			}, TIMEOUT_THROTTLE)
 		}
+
 		checkKeyHit(event.key)
 	}
 })
